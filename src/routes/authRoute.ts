@@ -1,7 +1,7 @@
 import express from "express";
-import { validate } from "../middlewares/validate";
-import { authMiddleware } from "../middlewares/auth";
-import { AuthController } from "../controllers/authController";
+import { validate } from "../middlewares/ValidateMiddleware";
+import { authMiddleware } from "../middlewares/AuthMiddleware";
+import { AuthController } from "../controllers/AuthController";
 import { LoginRequest } from "../dto/requests/LoginRequest";
 import { SignupRequest } from "../dto/requests/SignupRequest";
 

@@ -5,13 +5,14 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import { LoginResponse } from "../dto/responses/LoginResponse";
 import { SignupResponse } from "../dto/responses/SignupResponse";
+import ExposableError from "../error/ExposableError";
 
 export class AuthService {
   async login(loginBody: LoginRequest): Promise<LoginResponse> {
     const user = await User.findOne({ where: { email: loginBody.email } });
 
     if (!user || !(await bcrypt.compare(loginBody.password, user.password))) {
-      throw new Error("Incorrect email or password");
+      throw new ExposableError("Incorrect email or password", 400);
     }
     const { password, ...userWithoutPassword } = user.get();
     const tokens = this.createTokens(user.id);
@@ -39,7 +40,7 @@ export class AuthService {
 
   async refreshToken(refreshToken: string) {
     if (!refreshToken) {
-      return { message: "Refresh token is required" };
+      throw new ExposableError("Refresh token is required", 400);
     }
 
     try {
@@ -48,15 +49,14 @@ export class AuthService {
       const user = await User.findByPk(decoded.id);
 
       if (!user) {
-        return { message: "User not found" };
+        throw new ExposableError("User not found", 404);
       }
 
       const tokens = this.createTokens(user.id);
 
       return { tokens };
-    } catch (err) {
-      console.error("Refresh token error:", err);
-      return { message: "Invalid refresh token" };
+    } catch (err: any) {
+      throw new ExposableError(err.message || "Invalid refresh token", err.statusCode || 400);
     }
   }
 }

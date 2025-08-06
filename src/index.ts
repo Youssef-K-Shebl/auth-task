@@ -2,8 +2,9 @@ import dotenv from "dotenv";
 dotenv.config();
 
 import express, { Request, Response } from "express";
-import { router as AuthRouter } from "./routes/authRoute";
-import { connectDatabase, sequelize } from "./config/database";
+import { router as AuthRouter } from "./routes/AuthRoute";
+import { connectDatabase, sequelize } from "./config/Database";
+import ErrorHandlerMiddleware from "./middlewares/ErrorHandlerMiddleware";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -15,6 +16,8 @@ app.get("/", (req: Request, res: Response) => {
 });
 
 app.use("/auth", AuthRouter);
+
+app.use(ErrorHandlerMiddleware.exposableErrorHandler, ErrorHandlerMiddleware.errorHandler);
 
 connectDatabase()
   .then(() => {
