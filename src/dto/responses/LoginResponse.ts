@@ -7,6 +7,6 @@ export class UserResponse {
   declare id: number;
   declare username: string;
   declare email: string;
-  declare createdAt: Date;
-  declare updatedAt: Date;
+  declare created_at: Date;
+  declare updated_at: Date;
 }

@@ -1,5 +1,5 @@
 import { UserResponse } from "./LoginResponse";
 
-export class Signupresponse {
+export class SignupResponse {
   declare user: UserResponse;
 }

@@ -4,7 +4,7 @@ import { User } from "../models/UserModel";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import { LoginResponse } from "../dto/responses/LoginResponse";
-import { Signupresponse } from "../dto/responses/SignupResponse";
+import { SignupResponse } from "../dto/responses/SignupResponse";
 
 export class AuthService {
   async login(loginBody: LoginRequest): Promise<LoginResponse> {
@@ -19,7 +19,7 @@ export class AuthService {
     return loginResponse;
   }
 
-  async signup(signUpBody: SignupRequest): Promise<Signupresponse> {
+  async signup(signUpBody: SignupRequest): Promise<SignupResponse> {
     const newUser = await User.create({
       username: signUpBody.username,
       password: signUpBody.password,
@@ -27,7 +27,7 @@ export class AuthService {
     });
 
     const { password, ...userWithoutPassword } = newUser.get();
-    const signupResponse: Signupresponse = userWithoutPassword;
+    const signupResponse: SignupResponse = { user: userWithoutPassword };
     return signupResponse;
   }
 

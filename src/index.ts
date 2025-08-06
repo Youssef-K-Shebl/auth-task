@@ -3,7 +3,7 @@ dotenv.config();
 
 import express, { Request, Response } from "express";
 import { router as AuthRouter } from "./routes/authRoute";
-import { connectDatabase, sequelize } from "./config/Database";
+import { connectDatabase, sequelize } from "./config/database";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
