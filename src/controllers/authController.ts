@@ -1,7 +1,8 @@
 import { Request, Response } from "express";
 import { AuthService } from "../services/authService";
-import { SignupDto } from "../dto/Signup.dto";
-import { LoginDto } from "../dto/Login.dto";
+import { SignupRequest } from "../dto/requests/SignupRequest";
+import { LoginRequest } from "../dto/requests/LoginRequest";
+import SuccessResponse from "../dto/responses/SuccessResponse";
 
 export class AuthController {
   private readonly authService: AuthService;
@@ -12,20 +13,20 @@ export class AuthController {
 
   // Example method
   signup = async (req: Request, res: Response) => {
-    const signupBody: SignupDto = req.body;
+    const signupBody: SignupRequest = req.body;
     try {
       const result = await this.authService.signup(signupBody);
-      res.status(200).json({ message: result });
+      res.status(200).json(SuccessResponse.of("Signup successful", result));
     } catch (error: any) {
       res.status(400).json({ error: error.message });
     }
   };
 
   login = async (req: Request, res: Response) => {
-    const loginBody: LoginDto = req.body;
+    const loginBody: LoginRequest = req.body;
     try {
       const result = await this.authService.login(loginBody);
-      res.status(200).json({ user: result.user, tokens: result.tokens });
+      res.status(200).json(SuccessResponse.of("Login successful", result));
     } catch (error: any) {
       res.status(401).json({ error: error.message });
     }

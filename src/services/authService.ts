@@ -1,11 +1,13 @@
-import { LoginDto } from "../dto/Login.dto";
-import { SignupDto } from "../dto/Signup.dto";
+import { LoginRequest } from "../dto/requests/LoginRequest";
+import { SignupRequest } from "../dto/requests/SignupRequest";
 import { User } from "../models/user.model";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
+import { LoginResponse } from "../dto/responses/LoginResponse";
+import { Signupresponse } from "../dto/responses/SignupResponse";
 
 export class AuthService {
-  async login(loginBody: LoginDto): Promise<{ user: any; tokens: { accesstoken: string; refreshtoken: string } }> {
+  async login(loginBody: LoginRequest): Promise<LoginResponse> {
     const user = await User.findOne({ where: { email: loginBody.email } });
 
     if (!user || !(await bcrypt.compare(loginBody.password, user.password))) {
@@ -13,10 +15,11 @@ export class AuthService {
     }
     const { password, ...userWithoutPassword } = user.get();
     const tokens = this.createTokens(user.id);
-    return { user: userWithoutPassword, tokens };
+    const loginResponse: LoginResponse = { user: userWithoutPassword, tokens };
+    return loginResponse;
   }
 
-  async signup(signUpBody: SignupDto) {
+  async signup(signUpBody: SignupRequest): Promise<Signupresponse> {
     const newUser = await User.create({
       username: signUpBody.username,
       password: signUpBody.password,
@@ -24,8 +27,8 @@ export class AuthService {
     });
 
     const { password, ...userWithoutPassword } = newUser.get();
-
-    return userWithoutPassword;
+    const signupResponse: Signupresponse = userWithoutPassword;
+    return signupResponse;
   }
 
   createTokens(userId: number): { accesstoken: string; refreshtoken: string } {
