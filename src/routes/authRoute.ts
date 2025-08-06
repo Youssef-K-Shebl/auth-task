@@ -1,10 +1,8 @@
 import express from "express";
-import { AuthController } from "../controllers/authController";
 import { loginValidator, signupValidator } from "../validators/userValidator";
 import { validate } from "../middlewares/validate";
 import { authMiddleware } from "../middlewares/auth";
-import jwt from "jsonwebtoken";
-import { User } from "../models/user.model";
+import { AuthController } from "../controllers/authController";
 
 export const router = express.Router();
 

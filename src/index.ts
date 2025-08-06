@@ -2,8 +2,8 @@ import dotenv from "dotenv";
 dotenv.config();
 
 import express, { Request, Response } from "express";
-import { router as authRouter } from "./routes/authRoute";
-import { connectDatabase, sequelize } from "./config/database";
+import { router as AuthRouter } from "./routes/authRoute";
+import { connectDatabase, sequelize } from "./config/Database";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -14,7 +14,7 @@ app.get("/", (req: Request, res: Response) => {
   res.send("Hello from TypeScript + Express!");
 });
 
-app.use("/auth", authRouter);
+app.use("/auth", AuthRouter);
 
 connectDatabase()
   .then(() => {

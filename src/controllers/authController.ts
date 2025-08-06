@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
-import { AuthService } from "../services/authService";
 import { SignupRequest } from "../dto/requests/SignupRequest";
 import { LoginRequest } from "../dto/requests/LoginRequest";
 import SuccessResponse from "../dto/responses/SuccessResponse";
+import { AuthService } from "../services/authService";
 
 export class AuthController {
   private readonly authService: AuthService;

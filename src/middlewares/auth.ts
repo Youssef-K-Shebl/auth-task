@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import jwt from "jsonwebtoken";
-import { User } from "../models/user.model";
+import { User } from "../models/UserModel";
 export const authMiddleware = async (req: Request, res: Response, next: Function) => {
   let token;
   if (req.headers.authorization && req.headers.authorization.startsWith("Bearer")) {

@@ -1,6 +1,6 @@
 import { LoginRequest } from "../dto/requests/LoginRequest";
 import { SignupRequest } from "../dto/requests/SignupRequest";
-import { User } from "../models/user.model";
+import { User } from "../models/UserModel";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import { LoginResponse } from "../dto/responses/LoginResponse";
