@@ -6,6 +6,7 @@ import bcrypt from "bcrypt";
 import { LoginResponse } from "../dto/responses/LoginResponse";
 import { SignupResponse } from "../dto/responses/SignupResponse";
 import ExposableError from "../error/ExposableError";
+import { setting } from "../config/Setting";
 
 export class AuthService {
   async login(loginBody: LoginRequest): Promise<LoginResponse> {
@@ -21,6 +22,10 @@ export class AuthService {
   }
 
   async signup(signUpBody: SignupRequest): Promise<SignupResponse> {
+    const existingUser = await User.findOne({ where: { email: signUpBody.email } });
+    if (existingUser) {
+      throw new ExposableError("User already exists", 400);
+    }
     const newUser = await User.create({
       username: signUpBody.username,
       password: signUpBody.password,
@@ -33,8 +38,12 @@ export class AuthService {
   }
 
   createTokens(userId: number): { accesstoken: string; refreshtoken: string } {
-    const accesstoken = jwt.sign({ id: userId }, process.env.JWT_SECRET ?? "secret", { expiresIn: "15m" });
-    const refreshtoken = jwt.sign({ id: userId }, process.env.JWT_SECRET ?? "secret", { expiresIn: "1d" });
+    const accesstoken = jwt.sign({ id: userId }, setting.JWT_SECRET, {
+      expiresIn: setting.JWT_ACCESS_TOKEN_EXPIRES_IN,
+    });
+    const refreshtoken = jwt.sign({ id: userId }, setting.JWT_SECRET, {
+      expiresIn: setting.JWT_REFRESH_TOKEN_EXPIRES_IN,
+    });
     return { accesstoken, refreshtoken };
   }
 
@@ -44,7 +53,7 @@ export class AuthService {
     }
 
     try {
-      const decoded: any = jwt.verify(refreshToken, process.env.JWT_SECRET as string);
+      const decoded: any = jwt.verify(refreshToken, setting.JWT_SECRET);
 
       const user = await User.findByPk(decoded.id);
 

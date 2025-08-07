@@ -32,12 +32,6 @@ export class AuthController {
     }
   };
 
-  profile = async (req: any, res: Response) => {
-    return res.status(200).json({
-      user: req.user,
-    });
-  };
-
   refreshToken = async (req: Request, res: Response, next: NextFunction) => {
     const { refreshToken } = req.body;
     try {

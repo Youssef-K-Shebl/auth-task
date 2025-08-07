@@ -2,13 +2,14 @@ import bcrypt from "bcrypt";
 import {
   AllowNull,
   AutoIncrement,
-  BeforeSave,
+  BeforeCreate,
   Column,
   CreatedAt,
   DataType,
   Model,
   PrimaryKey,
   Table,
+  Unique,
   UpdatedAt,
 } from "sequelize-typescript";
 
@@ -30,9 +31,14 @@ export class User extends Model {
   @Column(DataType.STRING)
   declare password: string;
 
+  @Unique
   @AllowNull(false)
   @Column(DataType.STRING)
   declare email: string;
+
+  @AllowNull(true)
+  @Column(DataType.STRING)
+  declare profileImage: string;
 
   @CreatedAt
   @Column({ type: DataType.DATE, field: "created_at" })
@@ -42,7 +48,7 @@ export class User extends Model {
   @Column({ type: DataType.DATE, field: "updated_at" })
   declare updated_at: Date;
 
-  @BeforeSave
+  @BeforeCreate
   static async asynchashPassword(user: User) {
     const salt = await bcrypt.genSalt(10);
     const hash = await bcrypt.hash(user.password, salt);

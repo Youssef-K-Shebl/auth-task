@@ -3,6 +3,7 @@ import jwt from "jsonwebtoken";
 import { User } from "../models/UserModel";
 import ExposableError from "../error/ExposableError";
 import { constants } from "http2";
+import { setting } from "../config/Setting";
 
 export const authMiddleware = async (req: Request, res: Response, next: Function) => {
   let token;
@@ -15,7 +16,7 @@ export const authMiddleware = async (req: Request, res: Response, next: Function
 
   // 2) Verification token
   try {
-    const decoded: any = jwt.verify(token, process.env.JWT_SECRET ?? "secret");
+    const decoded: any = jwt.verify(token, setting.JWT_SECRET);
     const currentUser = await User.findOne({ where: { id: decoded.id } });
     if (!currentUser) {
       throw new ExposableError(

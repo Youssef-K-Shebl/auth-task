@@ -1,15 +1,16 @@
 import { Sequelize } from "sequelize-typescript";
 import { User } from "../models/UserModel";
+import { setting } from "./Setting";
 
 export const sequelize = new Sequelize({
-  dialect: "mysql",
-  host: "localhost",
-  username: "root",
-  password: "password",
-  database: "auth",
+  dialect: setting.DATABASE_TYPE,
+  host: setting.DATABASE_HOST,
+  username: setting.DATABASE_USERNAME,
+  password: setting.DATABASE_PASSWORD,
+  database: setting.DATABASE_NAME,
   models: [User],
 });
-// process.env.DATABASE_URL || "mysql"
+
 export const connectDatabase = async () => {
   try {
     await sequelize.authenticate();

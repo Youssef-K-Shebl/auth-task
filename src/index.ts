@@ -3,11 +3,12 @@ dotenv.config();
 
 import express, { Request, Response } from "express";
 import { router as AuthRouter } from "./routes/AuthRoute";
+import { router as ProfileRouter } from "./routes/ProfileRoute";
 import { connectDatabase, sequelize } from "./config/Database";
 import ErrorHandlerMiddleware from "./middlewares/ErrorHandlerMiddleware";
+import { setting } from "./config/Setting";
 
 const app = express();
-const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
 
@@ -16,6 +17,7 @@ app.get("/", (req: Request, res: Response) => {
 });
 
 app.use("/auth", AuthRouter);
+app.use("/profile", ProfileRouter);
 
 app.use(ErrorHandlerMiddleware.exposableErrorHandler, ErrorHandlerMiddleware.errorHandler);
 
@@ -23,8 +25,8 @@ connectDatabase()
   .then(() => {
     sequelize.sync().then(() => {
       console.log("✅ All models were synchronized successfully.");
-      app.listen(PORT, () => {
-        console.log(`Server running at http://localhost:${PORT}`);
+      app.listen(setting.PORT, () => {
+        console.log(`Server running at http://localhost:${setting.PORT}`);
       });
     });
   })
