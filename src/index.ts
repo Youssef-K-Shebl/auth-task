@@ -4,6 +4,7 @@ dotenv.config();
 import express, { Request, Response } from "express";
 import { router as AuthRouter } from "./routes/AuthRoute";
 import { router as ProfileRouter } from "./routes/ProfileRoute";
+import { router as DNSRouter } from "./routes/DNSRoute";
 import { connectDatabase, sequelize } from "./config/Database";
 import ErrorHandlerMiddleware from "./middlewares/ErrorHandlerMiddleware";
 import { setting } from "./config/Setting";
@@ -18,6 +19,7 @@ app.get("/", (req: Request, res: Response) => {
 
 app.use("/auth", AuthRouter);
 app.use("/profile", ProfileRouter);
+app.use("/DNS", DNSRouter);
 
 app.use(ErrorHandlerMiddleware.exposableErrorHandler, ErrorHandlerMiddleware.errorHandler);
 
