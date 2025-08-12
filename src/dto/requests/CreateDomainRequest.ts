@@ -4,6 +4,7 @@ import { DomainStatus } from "../../models/DomainModel";
 export class CreateDomainRequest {
   declare name: string;
   declare status: DomainStatus;
+  declare created_by: number;
 
   public static getValidationList() {
     return [

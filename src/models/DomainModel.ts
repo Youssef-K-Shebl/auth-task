@@ -1,8 +1,11 @@
 import {
   AutoIncrement,
+  BeforeCreate,
+  BelongsTo,
   Column,
   CreatedAt,
   DataType,
+  ForeignKey,
   HasMany,
   Model,
   PrimaryKey,
@@ -10,6 +13,8 @@ import {
   UpdatedAt,
 } from "sequelize-typescript";
 import { DomainRecord } from "./DomainRecordModel";
+import { User } from "./UserModel";
+
 export enum DomainStatus {
   ACTIVE = "active",
   EXPIRED = "expired",
@@ -27,6 +32,13 @@ export class Domain extends Model {
 
   @Column(DataType.ENUM(...Object.keys(DomainStatus)))
   declare status: DomainStatus;
+
+  @ForeignKey(() => User)
+  @Column({ type: DataType.BIGINT.UNSIGNED, field: "created_by", allowNull: true })
+  declare created_by: number;
+
+  @BelongsTo(() => User, { onDelete: "cascade", onUpdate: "cascade" })
+  declare user: User;
 
   @CreatedAt
   @Column({ type: DataType.DATE, field: "created_at" })

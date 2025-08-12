@@ -71,7 +71,7 @@ export class DNSConfig implements IDNSConfig {
         {
           rrsets: [
             {
-              name: recordName + ".",
+              name: `${recordName}.${domainName}` + ".",
               type: updateRecordOptions.type,
               ttl: updateRecordOptions.ttl,
               changetype: "REPLACE",

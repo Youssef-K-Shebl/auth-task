@@ -5,8 +5,13 @@ import { CreateDomainRequest } from "../dto/requests/CreateDomainRequest";
 import { constants } from "http2";
 import { CreateRecordRequest } from "../dto/requests/CreateRecordRequest";
 import { UpdateRecordRequest } from "../dto/requests/UpdateRecordRequest";
-import { IDNSConfig } from "../interfaces/IDNSConfig";
 import { DNSConfig } from "../config/DNSConfig";
+import { GetDomainsResponse } from "../dto/responses/GetDomainsResponse";
+import { plainToInstance } from "class-transformer";
+import { CreateDomainResponse } from "../dto/responses/CreateDomainResponse";
+import { CreateDomainRecordResponse } from "../dto/responses/CreateDomainRecordResponse";
+import { GetDomainsRecordResponse } from "../dto/responses/GetDomainsRecordResponse";
+import { UpdateDomainRecordResponse } from "../dto/responses/UpdateDomainRecordResponse";
 
 export class DNSController {
   private readonly dnsService: DNSService;
@@ -15,10 +20,13 @@ export class DNSController {
     this.dnsService = new DNSService(new DNSConfig());
   }
 
-  // Example method
   getAll = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const result = await this.dnsService.getAll();
+      const queryResult = await this.dnsService.getAll((req as any).user.id);
+      const result: GetDomainsResponse[] = plainToInstance(GetDomainsResponse, queryResult, {
+        excludeExtraneousValues: true,
+      });
+
       res.status(200).json(SuccessResponse.of("Get all successful", result));
     } catch (error: any) {
       next(error);
@@ -27,8 +35,10 @@ export class DNSController {
 
   create = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const createDomainBody: CreateDomainRequest = req.body;
-      const result = await this.dnsService.create(createDomainBody);
+      const createDomainBody: CreateDomainRequest = { ...req.body, created_by: (req as any).user.id };
+      const result = plainToInstance(CreateDomainResponse, await this.dnsService.create(createDomainBody), {
+        excludeExtraneousValues: true,
+      });
       res.status(200).json(SuccessResponse.of("Create successful", result));
     } catch (error: any) {
       next(error);
@@ -48,9 +58,16 @@ export class DNSController {
   createRecord = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const domainId = req.params.domainId as string;
-      const createRecordBody: CreateRecordRequest = req.body;
+      const createRecordBody: CreateRecordRequest = { ...req.body, created_by: (req as any).user.id };
       const result = await this.dnsService.createRecord(createRecordBody, Number(domainId));
-      res.status(200).json(SuccessResponse.of("Create record successful", result));
+      res
+        .status(200)
+        .json(
+          SuccessResponse.of(
+            "Create record successful",
+            plainToInstance(CreateDomainRecordResponse, result, { excludeExtraneousValues: true })
+          )
+        );
     } catch (error: any) {
       next(error);
     }
@@ -60,7 +77,14 @@ export class DNSController {
     try {
       const domainId = req.params.domainId as string;
       const result = await this.dnsService.getRecords(Number(domainId));
-      res.status(200).json(SuccessResponse.of("Get records successful", result));
+      res
+        .status(200)
+        .json(
+          SuccessResponse.of(
+            "Get records successful",
+            plainToInstance(GetDomainsRecordResponse, result, { excludeExtraneousValues: true })
+          )
+        );
     } catch (error: any) {
       next(error);
     }
@@ -72,7 +96,14 @@ export class DNSController {
       const recordId = req.params.recordId as string;
       const updateRecordBody: UpdateRecordRequest = req.body;
       const result = await this.dnsService.updateRecord(updateRecordBody, Number(domainId), Number(recordId));
-      res.status(200).json(SuccessResponse.of("Update record successful", result));
+      res
+        .status(200)
+        .json(
+          SuccessResponse.of(
+            "Update record successful",
+            plainToInstance(UpdateDomainRecordResponse, result, { excludeExtraneousValues: true })
+          )
+        );
     } catch (error: any) {
       next(error);
     }

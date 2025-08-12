@@ -11,11 +11,11 @@ import {
   UpdatedAt,
 } from "sequelize-typescript";
 import { Domain } from "./DomainModel";
+import { User } from "./UserModel";
 
 export enum RecordStatus {
   "ACTIVE" = "active",
   "DISABLED" = "disabled",
-  "PENDING_UPDATE" = "pending_update", // TODO remove it
 }
 
 export enum RecordType {
@@ -53,6 +53,13 @@ export class DomainRecord extends Model {
 
   @Column(DataType.ENUM(...Object.keys(RecordStatus)))
   declare status: RecordStatus;
+
+  @ForeignKey(() => User)
+  @Column({ type: DataType.BIGINT.UNSIGNED, field: "created_by", allowNull: true })
+  declare created_by: number;
+
+  @BelongsTo(() => User, { onDelete: "cascade", onUpdate: "cascade" })
+  declare user: User;
 
   @CreatedAt
   @Column({ type: DataType.DATE, field: "created_at" })

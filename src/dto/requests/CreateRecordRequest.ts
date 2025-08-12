@@ -7,6 +7,7 @@ export class CreateRecordRequest {
   declare ttl: number;
   declare status: RecordStatus;
   declare value: string;
+  declare created_by: number;
 
   public static getValidationList() {
     return [
