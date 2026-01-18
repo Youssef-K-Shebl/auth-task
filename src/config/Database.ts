@@ -1,6 +1,8 @@
 import { Sequelize } from "sequelize-typescript";
 import { User } from "../models/UserModel";
 import { setting } from "./Setting";
+import { Domain } from "../models/DomainModel";
+import { DomainRecord } from "../models/DomainRecordModel";
 
 export const sequelize = new Sequelize({
   dialect: setting.DATABASE_TYPE,
@@ -8,7 +10,7 @@ export const sequelize = new Sequelize({
   username: setting.DATABASE_USERNAME,
   password: setting.DATABASE_PASSWORD,
   database: setting.DATABASE_NAME,
-  models: [User],
+  models: [User, Domain, DomainRecord],
 });
 
 export const connectDatabase = async () => {

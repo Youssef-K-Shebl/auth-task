@@ -16,6 +16,9 @@ class Setting {
 
   public readonly UPLOAD_PATH: string;
 
+  public readonly DNS_HOST: string;
+  public readonly X_API_KEY: string;
+
   constructor() {
     const requiredEnv = [
       "DATABASE_TYPE",
@@ -31,6 +34,9 @@ class Setting {
       "JWT_REFRESH_TOKEN_EXPIRES_IN",
 
       "UPLOAD_PATH",
+
+      "DNS_HOST",
+      "X_API_KEY",
     ];
 
     for (const key of requiredEnv) {
@@ -53,6 +59,9 @@ class Setting {
     this.JWT_REFRESH_TOKEN_EXPIRES_IN = process.env.JWT_REFRESH_TOKEN_EXPIRES_IN as ms.StringValue;
 
     this.UPLOAD_PATH = process.env.UPLOAD_PATH as string;
+
+    this.DNS_HOST = process.env.DNS_HOST as string;
+    this.X_API_KEY = process.env.X_API_KEY as string;
   }
 }
 
