@@ -97,7 +97,7 @@ export class DNSConfig implements IDNSConfig {
         {
           rrsets: [
             {
-              name: recordName + ".",
+              name: domainName + "." + recordName + ".",
               type: recordType,
               changetype: "DELETE",
             },

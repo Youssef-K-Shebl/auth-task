@@ -13,7 +13,6 @@ export const authMiddleware = async (req: Request, res: Response, next: Function
 
   if (!token)
     throw new ExposableError("You are not logged in! Please log in to get access.", constants.HTTP_STATUS_UNAUTHORIZED);
-
   // 2) Verification token
   try {
     const decoded: any = jwt.verify(token, setting.JWT_SECRET);
@@ -25,7 +24,7 @@ export const authMiddleware = async (req: Request, res: Response, next: Function
       );
     }
     const { password, ...safeUserData } = currentUser.get();
-    (req as any).user = safeUserData;
+    req.AuthContext = safeUserData;
     next();
   } catch (error: any) {
     throw new ExposableError(error.message || "Invalid token", error.statusCode || 400);

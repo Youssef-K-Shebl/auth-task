@@ -22,7 +22,7 @@ export class DNSController {
 
   getAll = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const queryResult = await this.dnsService.getAll((req as any).user.id);
+      const queryResult = await this.dnsService.getAll(Number(req.AuthContext?.id));
       const result: GetDomainsResponse[] = plainToInstance(GetDomainsResponse, queryResult, {
         excludeExtraneousValues: true,
       });
@@ -35,7 +35,7 @@ export class DNSController {
 
   create = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const createDomainBody: CreateDomainRequest = { ...req.body, created_by: (req as any).user.id };
+      const createDomainBody: CreateDomainRequest = { ...req.body, created_by: req.AuthContext?.id };
       const result = plainToInstance(CreateDomainResponse, await this.dnsService.create(createDomainBody), {
         excludeExtraneousValues: true,
       });
@@ -48,7 +48,7 @@ export class DNSController {
   delete = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const domainId = req.params.domainId as string;
-      await this.dnsService.delete(domainId);
+      await this.dnsService.delete(domainId, Number(req.AuthContext?.id));
       res.status(constants.HTTP_STATUS_NO_CONTENT).json(SuccessResponse.of("Delete successful"));
     } catch (error: any) {
       next(error);
@@ -58,8 +58,12 @@ export class DNSController {
   createRecord = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const domainId = req.params.domainId as string;
-      const createRecordBody: CreateRecordRequest = { ...req.body, created_by: (req as any).user.id };
-      const result = await this.dnsService.createRecord(createRecordBody, Number(domainId));
+      const createRecordBody: CreateRecordRequest = req.body;
+      const result = await this.dnsService.createRecord(
+        createRecordBody,
+        Number(domainId),
+        Number(req.AuthContext?.id)
+      );
       res
         .status(200)
         .json(
@@ -76,7 +80,7 @@ export class DNSController {
   getRecords = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const domainId = req.params.domainId as string;
-      const result = await this.dnsService.getRecords(Number(domainId));
+      const result = await this.dnsService.getRecords(Number(domainId), Number(req.AuthContext?.username));
       res
         .status(200)
         .json(
@@ -95,7 +99,12 @@ export class DNSController {
       const domainId = req.params.domainId as string;
       const recordId = req.params.recordId as string;
       const updateRecordBody: UpdateRecordRequest = req.body;
-      const result = await this.dnsService.updateRecord(updateRecordBody, Number(domainId), Number(recordId));
+      const result = await this.dnsService.updateRecord(
+        updateRecordBody,
+        Number(domainId),
+        Number(recordId),
+        Number(req.AuthContext?.id)
+      );
       res
         .status(200)
         .json(
@@ -113,7 +122,11 @@ export class DNSController {
     try {
       const domainId = req.params.domainId as string;
       const recordId = req.params.recordId as string;
-      const result = await this.dnsService.deleteRecord(Number(domainId), Number(recordId));
+      const result = await this.dnsService.deleteRecord(
+        Number(domainId),
+        Number(recordId),
+        Number(req.AuthContext?.id)
+      );
       res.status(constants.HTTP_STATUS_NO_CONTENT).json(SuccessResponse.of("Delete record successful"));
     } catch (error: any) {
       next(error);

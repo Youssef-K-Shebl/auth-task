@@ -8,6 +8,7 @@ import { CreateDomainOptions, CreateRecordOptions, IDNSConfig, UpdateRecordOptio
 import { Domain } from "../models/DomainModel";
 import { DomainRecord, RecordType } from "../models/DomainRecordModel";
 import { isFQDN, isInt } from "validator";
+import { IAuthContext } from "../interfaces/IAuthContext";
 
 export class DNSService {
   constructor(private DNSConfig: IDNSConfig) {
@@ -35,9 +36,9 @@ export class DNSService {
     }
   }
 
-  async delete(domainId: string) {
+  async delete(domainId: string, userId: number) {
     const transaction = await sequelize.transaction();
-    const domain = await Domain.findByPk(domainId);
+    const domain = await Domain.findOne({ where: { id: domainId, created_by: userId } });
     if (!domain) {
       throw new ExposableError("Domain not found", 404);
     }
@@ -52,8 +53,8 @@ export class DNSService {
     }
   }
 
-  async createRecord(createRecordBody: CreateRecordRequest, domainId: number) {
-    const domain = await Domain.findByPk(domainId);
+  async createRecord(createRecordBody: CreateRecordRequest, domainId: number, userId: number) {
+    const domain = await Domain.findOne({ where: { domainId, created_by: userId } });
     if (!domain) {
       throw new ExposableError("Domain not found", 404);
     }
@@ -84,12 +85,16 @@ export class DNSService {
     }
   }
 
-  async getRecords(domainId: number) {
+  async getRecords(domainId: number, userId: number) {
+    const domain = await Domain.findOne({ where: { domainId, created_by: userId } });
+    if (!domain) {
+      throw new ExposableError("Domain not found", 404);
+    }
     return await DomainRecord.findAll({ where: { domain_id: domainId } });
   }
 
-  async updateRecord(updateRecordBody: UpdateRecordRequest, domainId: number, recordId: number) {
-    const domain = await Domain.findByPk(domainId);
+  async updateRecord(updateRecordBody: UpdateRecordRequest, domainId: number, recordId: number, userId: number) {
+    const domain = await Domain.findOne({ where: { domainId, created_by: userId } });
     if (!domain) {
       throw new ExposableError("Domain not found", 404);
     }
@@ -115,8 +120,8 @@ export class DNSService {
     }
   }
 
-  async deleteRecord(domainId: number, recordId: number) {
-    const domain = await Domain.findByPk(domainId);
+  async deleteRecord(domainId: number, recordId: number, userId: number) {
+    const domain = await Domain.findOne({ where: { domainId, created_by: userId } });
     if (!domain) {
       throw new ExposableError("Domain not found", 404);
     }
